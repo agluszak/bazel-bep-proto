@@ -17,7 +17,7 @@ jobs:
         id: extract_version
         run: |
           VERSION=$(grep -oP 'BAZEL_VERSION\s*=\s*"\K[^"]+' MODULE.bazel)
-          echo "::set-output name=version::$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Build
         run: bazel build //:bazel-bep-protobuf
       - name: Release
@@ -25,10 +25,8 @@ jobs:
         with:
           files: |
             bazel-bin/bazel-bep-protobuf.jar
-          tag_name: ${{ steps.extract_version.outputs.version }}
+          tag_name: ${{ env.VERSION }}
           body: |
-            Bazel BEP Protobuf ${{ steps.extract_version.outputs.version }}
+            Bazel BEP Protobuf ${{ env.VERSION }}
           draft: false
           prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

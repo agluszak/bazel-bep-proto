@@ -1,0 +1,45 @@
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v2
+      - name: Mount bazel cache  # Optional
+        uses: actions/cache@v3
+        with:
+          path: "~/.cache/bazel"
+          key: bazel
+      - name: Build
+        run: bazel build //:bazel-bep-protobuf
+      - name: Extract version
+        run: |
+          #!/bin/bash
+
+          # Read the MODULE.bazel file line by line
+          while read -r line; do
+            # Check if the line contains "BAZEL_VERSION"
+            if [[ "$line" == *"BAZEL_VERSION"* ]]; then
+              # Extract the version using awk and write to version.txt
+              echo "$line" | awk -F'"' '{print $2}' > version.txt
+              break
+            fi
+          done < MODULE.bazel
+
+          # Check if version.txt is populated, otherwise print an error message
+          if [[ ! -s version.txt ]]; then
+            echo "Couldn't find BAZEL_VERSION in MODULE.bazel, you sure it's there?"
+          fi
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bazel-bin/bazel-bep-protobuf.jar
+          tag_name: $(cat version.txt)
+          body: |
+            Bazel BEP Protobuf $(cat version.txt)
+          draft: false
+          prerelease: false

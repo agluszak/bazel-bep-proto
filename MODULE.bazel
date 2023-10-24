@@ -1,0 +1,31 @@
+module(name = "bazel-bep-protobuf", version="")
+
+BAZEL_VERSION = "7.0.0-pre.20231011.2"
+
+bazel_dep(name = "bazel", repo_name = "io_bazel")
+archive_override(
+    module_name = "bazel",
+    urls = "https://github.com/bazelbuild/bazel/archive/%s.zip" % BAZEL_VERSION,
+    strip_prefix = "bazel-%s" % BAZEL_VERSION,
+)
+
+# We need to override remoteapis and googleapis because of this:
+# https://github.com/bazelbuild/bazel/blob/ea4ab7d8e696f48253fd172fcfbd37661e4710d5/MODULE.bazel#L31
+
+bazel_dep(name = "remoteapis")
+archive_override(
+    module_name = "remoteapis",
+    urls = "https://github.com/bazelbuild/bazel/archive/%s.zip" % BAZEL_VERSION,
+    strip_prefix = "bazel-%s/third_party/remoteapis" % BAZEL_VERSION,
+)
+
+bazel_dep(name = "googleapis")
+archive_override(
+    module_name = "googleapis",
+    urls = "https://github.com/bazelbuild/bazel/archive/%s.zip" % BAZEL_VERSION,
+    strip_prefix = "bazel-%s/third_party/googleapis" % BAZEL_VERSION,
+)
+
+bazel_dep(name = "rules_java", version = "7.0.6")
+
+multiple_version_override(module_name = "rules_java", versions = ["6.3.1", "7.0.6"]) # 6.3.1 from Bazel

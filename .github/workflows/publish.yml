@@ -13,13 +13,13 @@ jobs:
         with:
           path: "~/.cache/bazel"
           key: bazel
-      - name: Build
-        run: bazel build //:bazel-bep-protobuf
       - name: Extract version
         id: extract_version
         run: |
-          VERSION=$(grep -oP 'BAZEL_VERSION=\K[^\s]+' MODULE.bazel)
+          VERSION=$(grep -oP 'BAZEL_VERSION\s*=\s*"\K[^"]+' MODULE.bazel)
           echo "::set-output name=version::$VERSION"
+      - name: Build
+        run: bazel build //:bazel-bep-protobuf
       - name: Release
         uses: softprops/action-gh-release@v1
         with:

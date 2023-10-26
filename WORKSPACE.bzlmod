@@ -1,0 +1,88 @@
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+# ======================================================================================================================
+# ----------------------------------------------------------------------------------------------------------------------
+# ======================================================================================================================
+# rules_jvm_external - for maven dependencies
+
+RULES_JVM_EXTERNAL_TAG = "5.3"
+
+RULES_JVM_EXTERNAL_SHA = "d31e369b854322ca5098ea12c69d7175ded971435e55c18dd9dd5f29cc5249ac"
+
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = RULES_JVM_EXTERNAL_SHA,
+    strip_prefix = "rules_jvm_external-{}".format(RULES_JVM_EXTERNAL_TAG),
+    url = "https://github.com/bazelbuild/rules_jvm_external/releases/download/%s/rules_jvm_external-%s.tar.gz" % (RULES_JVM_EXTERNAL_TAG, RULES_JVM_EXTERNAL_TAG),
+)
+
+# ======================================================================================================================
+# bazel_skylib - starlark functions
+
+BAZEL_SKYLIB_TAG = "1.4.2"
+
+BAZEL_SKYLIB_SHA = "66ffd9315665bfaafc96b52278f57c7e2dd09f5ede279ea6d39b2be471e7e3aa"
+
+http_archive(
+    name = "bazel_skylib",
+    sha256 = BAZEL_SKYLIB_SHA,
+    url = "https://github.com/bazelbuild/bazel-skylib/releases/download/{}/bazel-skylib-{}.tar.gz".format(BAZEL_SKYLIB_TAG, BAZEL_SKYLIB_TAG),
+)
+
+# ======================================================================================================================
+# io_bazel - for protobuf
+
+IO_BAZEL_TAG = "5.4.1"
+
+IO_BAZEL_SHA = "5463df80d3a6ea0872ff7da2049f0284f28d01fd76dfc66838eceea78cf5be57"
+
+http_archive(
+    name = "io_bazel",
+    sha256 = IO_BAZEL_SHA,
+    strip_prefix = "bazel-{}".format(IO_BAZEL_TAG),
+    url = "https://github.com/bazelbuild/bazel/archive/{}.zip".format(IO_BAZEL_TAG),
+)
+
+# ======================================================================================================================
+# googleapis - for build protos
+
+GOOGLEAPIS_TAG = "5.4.1"
+
+GOOGLEAPIS_SHA = "5463df80d3a6ea0872ff7da2049f0284f28d01fd76dfc66838eceea78cf5be57"
+
+http_archive(
+    name = "googleapis",
+    sha256 = GOOGLEAPIS_SHA,
+    strip_prefix = "bazel-{}/third_party/googleapis".format(GOOGLEAPIS_TAG),
+    url = "https://github.com/bazelbuild/bazel/archive/{}.zip".format(GOOGLEAPIS_TAG),
+)
+
+# ======================================================================================================================
+# rules_proto
+
+RULES_PROTO_TAG = "4.0.0-3.20.0"
+
+RULES_PROTO_SHA = "e017528fd1c91c5a33f15493e3a398181a9e821a804eb7ff5acdd1d2d6c2b18d"
+
+http_archive(
+    name = "rules_proto",
+    sha256 = RULES_PROTO_SHA,
+    strip_prefix = "rules_proto-{}".format(RULES_PROTO_TAG),
+    urls = [
+        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/{}.tar.gz".format(RULES_PROTO_TAG),
+    ],
+)
+
+# ----------------------------------------------------------------------------------------------------------------------
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()
+
+
+# --------------------------------------------------------------------------------------------------------------------
+load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+
+bazel_skylib_workspace()

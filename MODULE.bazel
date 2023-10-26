@@ -1,3 +1,5 @@
 module(name = "bazel-bep-protobuf", version="")
 
 bazel_dep(name = "rules_java", version = "7.0.6")
+
+BAZEL_VERSION = "5.4.1"
